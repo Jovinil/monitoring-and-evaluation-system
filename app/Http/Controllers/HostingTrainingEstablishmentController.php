@@ -185,13 +185,8 @@ class HostingTrainingEstablishmentController extends Controller
         ]);
 
         // dd($request->files->count());
-        // SAVING EVALUATION/CERTIFICATE FILE
-        $file = $request->file('evaluation');
-        //  . "-" . Auth::id() . time() .  USED TO BE IN THE FILENAME
-        $fileName = 'evaluation-'. Auth::user()->first_name  .'.' . $file->getCLientOriginalExtension();
-        $filePath = $file->storeAs('evaluations', $fileName);
 
-        $validated['evaluation'] = $fileName;
+        // $validated['evaluation'] = $fileName;
 
         // HAYSSS
         $pa_average = ($validated['generalAppearance'] +
@@ -228,7 +223,7 @@ class HostingTrainingEstablishmentController extends Controller
         //     'evaluation' => $fileName,
         //     'total_average' => ($pa_average + $sm_average + $hrs_average) / 3]
         // );
-        Evaluation::updateOrCreate(
+        $evaluation = Evaluation::updateOrCreate(
             ['stud_id' => $id,
             'hte_id' => Auth::id()],
             ['total_average' => ($pa_average + $sm_average + $hrs_average) / 3,
@@ -236,7 +231,7 @@ class HostingTrainingEstablishmentController extends Controller
             'sm_average' => $sm_average,
             'hrs_average' => $hrs_average,
 
-            'evaluation' => $validated['evaluation'],
+            'evaluation' => 'temp',
 
             'generalAppearance' => $validated['generalAppearance'],
             'attendance' => $validated['attendance'],
@@ -259,6 +254,15 @@ class HostingTrainingEstablishmentController extends Controller
             'description' => $validated['description']
         ]);
 
+        // SAVING EVALUATION/CERTIFICATE FILE
+        $file = $request->file('evaluation');
+        //  . "-" . Auth::id() . time() .  USED TO BE IN THE FILENAME
+        $fileName = 'evaluation-'. Auth::user()->first_name  . '-' . $evaluation->id .'.' . $file->getCLientOriginalExtension();
+        $filePath = $file->storeAs('evaluations', $fileName);
+
+        $evaluation->update(['evaluation' => $fileName]);
+
+        // dd($fileName);
 
         return redirect()->back()->with('success', 'Evaluation submitted successfully!');
     }
