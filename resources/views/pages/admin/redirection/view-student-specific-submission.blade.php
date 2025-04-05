@@ -105,7 +105,7 @@
                     <div class="card-body">
                         <div class="row g-3 text-center">
                             <div class="container-fluid mt-3 fs-5">
-                                Overall Average: <span class="fw-bold fs-5">1.00</span>
+                                Overall Average: <span class="fw-bold fs-5">{{ $evaluation->total_average }}</span>
                             </div>
 
                             <div class="col-12 col-lg-4">
